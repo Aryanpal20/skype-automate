@@ -13,6 +13,8 @@ import (
 )
 
 func skype() {
+
+	//  Get the data from env file
 	err1 := godotenv.Load()
 	if err1 != nil {
 		log.Fatal("Error loading .env file")
@@ -20,7 +22,7 @@ func skype() {
 	USER_EMAIL := os.Getenv("USER_EMAIL")
 	USER_PASSWORD := os.Getenv("USER_PASSWORD")
 	MESSAGE := os.Getenv("MESSAGE")
-	SKYPE_CONTACT := os.Getenv("SKYPE_CONTACT")
+	SKYPE_CONTACT := os.Getenv("SKYPE_NAME_ID")
 	// Start a Selenium WebDriver server
 	opts := []selenium.ServiceOption{}
 	_, err := selenium.NewChromeDriverService("chromedriver", 9515, opts...)
@@ -95,7 +97,7 @@ func skype() {
 	}
 	passwordField.SendKeys(USER_PASSWORD)
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	signInButton, err := webDriver.FindElement(selenium.ByCSSSelector, "input[type='submit'][value='Sign in']")
 	if err != nil {
 		panic(err)
@@ -111,7 +113,7 @@ func skype() {
 	}
 	stayfield.Click()
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 
 	gotitButton, err := webDriver.FindElement(selenium.ByXPATH, "/html/body/div[1]/div/div/div[1]/div[2]/div/div[2]/div/div[1]/div/div/div/div/div/div[3]/button/div")
 	if err != nil {
@@ -159,8 +161,13 @@ func skype() {
 }
 
 func RunCronJobs() {
+	err1 := godotenv.Load()
+	if err1 != nil {
+		log.Fatal("Error loading .env file")
+	}
+	CRON_TIME := os.Getenv("CRON_TIME")
 	s := gocron.NewScheduler(time.Local)
-	s.Every(1).Day().At("18:44").Do(func() {
+	s.Every(1).Day().At(CRON_TIME).Do(func() {
 		skype()
 	})
 
